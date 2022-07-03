@@ -18,6 +18,7 @@ import ru.scarlet.maps.repository.MapTypeRepository;
 import ru.scarlet.maps.service.MapService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +45,7 @@ public class MapController {
 
     @GetMapping("/fillMaps")
     public void voidMethod() {
-        Arrays.stream(CustomMapType.values()).forEach(maptype->
+        Arrays.stream(CustomMapType.values()).forEach(maptype ->
                 mapTypeRepository.save(new CustomMapTypeClass(null, maptype.name())));
         Arrays.stream(Location.values())
                 .forEach(location -> {
@@ -60,8 +61,6 @@ public class MapController {
         AppUser user4 = appUserRepository.findByUsername("arnold");
 
 
-
-
         CustomMap map1 = new CustomMap(UUID.randomUUID(), "Map#1", mapTypeRepository.findByCustomMapType(CustomMapType.ECONOMICAL.toString()), List.of(Countries.ICELAND), user1);
         CustomMap map2 = new CustomMap(UUID.randomUUID(), "Map#2", mapTypeRepository.findByCustomMapType(CustomMapType.ECONOMICAL.toString()), List.of(Countries.ICELAND, Countries.IRELAND), user2);
         CustomMap map3 = new CustomMap(UUID.randomUUID(), "Map#3", mapTypeRepository.findByCustomMapType(CustomMapType.ECONOMICAL.toString()), List.of(Countries.ICELAND, Countries.IRELAND, Countries.UKRAINE), user3);
@@ -73,6 +72,19 @@ public class MapController {
         mapService.saveMap(map3);
         mapService.saveMap(map4);
         mapService.saveMap(map5);
+
+        user1.getMaps().add(map1);
+        user2.getMaps().add(map2);
+        user3.getMaps().add(map3);
+        user4.getMaps().add(map4);
+        user2.getMaps().add(map5);
+
+
+        appUserRepository.save(user1);
+        appUserRepository.save(user2);
+        appUserRepository.save(user3);
+        appUserRepository.save(user4);
+
     }
 
     @GetMapping("/api/v1/maps")
@@ -96,11 +108,11 @@ public class MapController {
         DecodedJWT jwt = verifier.verify(refresh_token);
 
         AppUser user = appUserRepository.findByUsername(jwt.getSubject());
-        if (user==null) {
+        if (user == null) {
             //fixme: throw exception
             throw new UserNotFoundException("User not found");
         }
-        if (!user.getId().equals(id)){
+        if (!user.getId().equals(id)) {
             throw new CredentialCustomException("Wrong user");
         }
         return mapService.getMapsByOwnerId(id);
