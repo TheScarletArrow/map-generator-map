@@ -8,16 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import ru.scarlet.maps.entities.AppUser;
-import ru.scarlet.maps.entities.Countries;
-import ru.scarlet.maps.entities.CustomMap;
+import ru.scarlet.maps.entities.*;
 import ru.scarlet.maps.exception.CredentialCustomException;
 import ru.scarlet.maps.exception.UserNotFoundException;
 import ru.scarlet.maps.repository.AppUserRepository;
+import ru.scarlet.maps.repository.CountryRepository;
+import ru.scarlet.maps.repository.LocationRepository;
+import ru.scarlet.maps.repository.MapTypeRepository;
 import ru.scarlet.maps.service.MapService;
 
 import javax.security.auth.login.CredentialException;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +33,48 @@ public class MapController {
 
     @Autowired
     private AppUserRepository appUserRepository;
+
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
+    @Autowired
+    private MapTypeRepository mapTypeRepository;
+
+    @GetMapping("/fillMaps")
+    public void voidMethod() {
+        Arrays.stream(CustomMapType.values()).forEach(maptype->
+                mapTypeRepository.save(new CustomMapTypeClass(null, maptype.name())));
+        Arrays.stream(Location.values())
+                .forEach(location -> {
+                    var location1 = locationRepository.save(new LocationClass(null, location.name()));
+                    Arrays.stream(Countries.values()).forEach(country -> countryRepository.save(
+                            new Country(null, country.name(), location1)));
+                });
+
+
+        AppUser user1 = appUserRepository.findByUsername("adyurkov");
+        AppUser user2 = appUserRepository.findByUsername("will");
+        AppUser user3 = appUserRepository.findByUsername("jim");
+        AppUser user4 = appUserRepository.findByUsername("arnold");
+
+
+
+
+        CustomMap map1 = new CustomMap(UUID.randomUUID(), "Map#1", mapTypeRepository.findByCustomMapType(CustomMapType.ECONOMICAL.toString()), List.of(Countries.ICELAND), user1);
+        CustomMap map2 = new CustomMap(UUID.randomUUID(), "Map#2", mapTypeRepository.findByCustomMapType(CustomMapType.ECONOMICAL.toString()), List.of(Countries.ICELAND, Countries.IRELAND), user2);
+        CustomMap map3 = new CustomMap(UUID.randomUUID(), "Map#3", mapTypeRepository.findByCustomMapType(CustomMapType.ECONOMICAL.toString()), List.of(Countries.ICELAND, Countries.IRELAND, Countries.UKRAINE), user3);
+        CustomMap map4 = new CustomMap(UUID.randomUUID(), "Map#4", mapTypeRepository.findByCustomMapType(CustomMapType.ECONOMICAL.toString()), List.of(Countries.ICELAND, Countries.IRELAND, Countries.UKRAINE, Countries.RUSSIA), user4);
+        CustomMap map5 = new CustomMap(UUID.randomUUID(), "Map#5", mapTypeRepository.findByCustomMapType(CustomMapType.POLITICAL.toString()), List.of(Countries.ICELAND, Countries.IRELAND, Countries.UKRAINE, Countries.RUSSIA, Countries.UNITEDSTATES), user2);
+
+        mapService.saveMap(map1);
+        mapService.saveMap(map2);
+        mapService.saveMap(map3);
+        mapService.saveMap(map4);
+        mapService.saveMap(map5);
+    }
 
     @GetMapping("/api/v1/maps")
     public List<CustomMap> getMaps() {
