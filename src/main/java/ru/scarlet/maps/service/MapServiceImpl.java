@@ -3,6 +3,7 @@ package ru.scarlet.maps.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.scarlet.maps.entities.Countries;
 import ru.scarlet.maps.entities.CustomMap;
 import ru.scarlet.maps.repository.MapRepository;
 
@@ -37,6 +38,11 @@ public class MapServiceImpl implements MapService {
     @Override
     public List<CustomMap> getMapsByOwnerId(Long id) {
         return mapRepository.findByOwner_Id(id);
+    }
+
+    @Override
+    public List<Countries> getCountries() {
+        return List.of(Countries.values());
     }
 
 }

@@ -1,6 +1,8 @@
 package ru.scarlet.maps.service;
 
 
+import ru.scarlet.maps.entities.Countries;
+import ru.scarlet.maps.entities.Country;
 import ru.scarlet.maps.entities.CustomMap;
 
 import java.util.List;
@@ -12,4 +14,6 @@ public interface MapService {
     List<CustomMap> getMaps();
 
     List<CustomMap> getMapsByOwnerId(Long id);
+
+    List<Countries> getCountries();
 }

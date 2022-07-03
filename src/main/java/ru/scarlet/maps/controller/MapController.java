@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import ru.scarlet.maps.entities.AppUser;
+import ru.scarlet.maps.entities.Countries;
 import ru.scarlet.maps.entities.CustomMap;
 import ru.scarlet.maps.exception.CredentialCustomException;
 import ru.scarlet.maps.exception.UserNotFoundException;
@@ -60,6 +61,11 @@ public class MapController {
             throw new CredentialCustomException("Wrong user");
         }
         return mapService.getMapsByOwnerId(id);
+    }
+
+    @GetMapping("/api/v1/countries")
+    public List<Countries> getCountries() {
+        return mapService.getCountries();
     }
 
 }
