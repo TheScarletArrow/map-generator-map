@@ -17,7 +17,6 @@ import ru.scarlet.maps.repository.LocationRepository;
 import ru.scarlet.maps.repository.MapTypeRepository;
 import ru.scarlet.maps.service.MapService;
 
-import javax.security.auth.login.CredentialException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;

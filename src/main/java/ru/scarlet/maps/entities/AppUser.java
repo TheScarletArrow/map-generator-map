@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-//@Table(name = "app_user", schema = "diplom")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class AppUser {
     @Id
